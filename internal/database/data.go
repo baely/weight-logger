@@ -31,6 +31,27 @@ const (
 	tokenDocument       = "token"
 )
 
+func updateIfNotEqual(source *Document, ref Document) bool {
+	if source.ActiveEnergy == 0 {
+		source.ActiveEnergy = ref.ActiveEnergy
+	}
+	if source.RestingEnergy == 0 {
+		source.RestingEnergy = ref.RestingEnergy
+	}
+	if source.IntakeEnergy == 0 {
+		source.IntakeEnergy = ref.IntakeEnergy
+	}
+	if source.Weight == 0 {
+		source.Weight = ref.Weight
+	}
+
+	if *source != ref {
+		return false
+	}
+
+	return true
+}
+
 func (d Document) InsertOrUpdate() error {
 	ctx := context.Background()
 
@@ -64,7 +85,7 @@ func (d Document) InsertOrUpdate() error {
 		if err != nil {
 			return fmt.Errorf("failed to unmarshall database document: %v\n", err)
 		}
-		if d != firestoreDocument {
+		if ok := updateIfNotEqual(&d, firestoreDocument); !ok {
 			_, err := docRef.Set(ctx, d)
 			if err != nil {
 				return fmt.Errorf("failed to update the document: %v\n", err)

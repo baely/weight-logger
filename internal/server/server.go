@@ -109,14 +109,8 @@ func (s *Server) TriggerPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//igId := "17841451238400611"
-
-	loc, err := time.LoadLocation("Australia/Melbourne")
-	if err != nil {
-		fmt.Println("error loading tz:", err)
-		return
-	}
-	date := time.Now().AddDate(0, 0, -1).In(loc).Format("2006-01-02")
+	// Hack to avoid loading tz files
+	date := time.Now().Add(10*time.Hour).AddDate(0, 0, -1).Format("2006-01-02")
 	file := fmt.Sprintf("https://storage.googleapis.com/res.xbd.au/weightlog/%s.jpg", date)
 	containerId, err := meta.CreateContainer(igId, file, date, busToken)
 	if err != nil {

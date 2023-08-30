@@ -161,8 +161,6 @@ func DoReq[T any](method, baseUri string, params urlParams) (T, error) {
 
 	req.URL.RawQuery = q.Encode()
 
-	fmt.Println("built url: ", req.URL.String())
-
 	resp, err := client.Do(req)
 	if err != nil {
 		return t, err

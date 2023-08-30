@@ -85,7 +85,7 @@ func Generate(doc database.Document) ([]byte, error) {
 
 	// Initialize freetype context and load fonts
 	c := newContext()
-	err := c.loadFonts("Roboto-Regular.ttf", "AbrilFatface-Regular.ttf", "AzeretMono-Bold.ttf", "B612Mono-Bold.ttf", "AzeretMono-Bold.ttf")
+	err := c.loadFonts("Roboto-Regular.ttf", "CarterOne-Regular.ttf")
 	if err != nil {
 		return nil, err
 	}
@@ -94,16 +94,16 @@ func Generate(doc database.Document) ([]byte, error) {
 	c.SetDst(img)
 
 	// Colors
-	lightGrey := image.NewUniform(color.RGBA{R: 225, G: 225, B: 225, A: 255})
+	lightGrey := image.NewUniform(color.RGBA{R: 233, G: 233, B: 233, A: 255})
 	red := image.NewUniform(color.RGBA{R: 201, G: 8, B: 79, A: 255})
 
 	// Draw rectangles on the image
 	rectangles := []image.Rectangle{
-		{Min: image.Point{0, 0}, Max: image.Point{1080, 180}},
-		{Min: image.Point{125, 400}, Max: image.Point{500, 550}},
-		{Min: image.Point{125, 750}, Max: image.Point{500, 900}},
-		{Min: image.Point{580, 400}, Max: image.Point{955, 550}},
-		{Min: image.Point{580, 750}, Max: image.Point{955, 900}},
+		{Min: image.Point{0, 0}, Max: image.Point{1080, 280}},
+		{Min: image.Point{80, 400}, Max: image.Point{500, 650}},
+		{Min: image.Point{80, 750}, Max: image.Point{500, 1000}},
+		{Min: image.Point{580, 400}, Max: image.Point{1000, 650}},
+		{Min: image.Point{580, 750}, Max: image.Point{1000, 1000}},
 	}
 	for _, r := range rectangles {
 		draw.Draw(img, r, lightGrey, image.Pt(0, 0), draw.Src)
@@ -118,21 +118,22 @@ func Generate(doc database.Document) ([]byte, error) {
 		point fixed.Point26_6
 	}{
 		// Title fonts
-		{"AbrilFatface-Regular.ttf", 64, image.Black, fmt.Sprintf("Daily Update     %s", doc.Title), freetype.Pt(150, 150)},
-		{"Roboto-Regular.ttf", 32, image.Black, fmt.Sprintf("Weight"), freetype.Pt(145, 390)},
-		{"Roboto-Regular.ttf", 32, image.Black, fmt.Sprintf("Intake"), freetype.Pt(600, 390)},
-		{"Roboto-Regular.ttf", 32, image.Black, fmt.Sprintf("Active Energy"), freetype.Pt(145, 740)},
-		{"Roboto-Regular.ttf", 32, image.Black, fmt.Sprintf("Resting Energy"), freetype.Pt(600, 740)},
+		{"CarterOne-Regular.ttf", 120, image.Black, fmt.Sprintf("Daily Update"), freetype.Pt(20, 125)},
+		{"CarterOne-Regular.ttf", 120, image.Black, doc.Title, freetype.Pt(325, 250)},
+		{"Roboto-Regular.ttf", 64, image.Black, fmt.Sprintf("Weight"), freetype.Pt(80, 390)},
+		{"Roboto-Regular.ttf", 64, image.Black, fmt.Sprintf("Intake"), freetype.Pt(580, 390)},
+		{"Roboto-Regular.ttf", 64, image.Black, fmt.Sprintf("Active Energy"), freetype.Pt(80, 740)},
+		{"Roboto-Regular.ttf", 64, image.Black, fmt.Sprintf("Resting Energy"), freetype.Pt(580, 740)},
 		// Units
-		{"Roboto-Regular.ttf", 58, image.Black, "kg", freetype.Pt(400, 500)},
-		{"Roboto-Regular.ttf", 58, image.Black, "kJ", freetype.Pt(855, 500)},
-		{"Roboto-Regular.ttf", 58, image.Black, "kJ", freetype.Pt(400, 850)},
-		{"Roboto-Regular.ttf", 58, image.Black, "kJ", freetype.Pt(855, 850)},
+		{"Roboto-Regular.ttf", 72, image.Black, "kg", freetype.Pt(400, 625)},
+		{"Roboto-Regular.ttf", 72, image.Black, "kJ", freetype.Pt(900, 625)},
+		{"Roboto-Regular.ttf", 72, image.Black, "kJ", freetype.Pt(400, 975)},
+		{"Roboto-Regular.ttf", 72, image.Black, "kJ", freetype.Pt(900, 975)},
 		// Qty
-		{"AbrilFatface-Regular.ttf", 72, red, fmt.Sprintf("%.1f", doc.Weight), freetype.Pt(165, 500)},
-		{"AbrilFatface-Regular.ttf", 72, red, fmt.Sprintf("%.0f", doc.IntakeEnergy), freetype.Pt(615, 500)},
-		{"AbrilFatface-Regular.ttf", 72, red, fmt.Sprintf("%.0f", doc.ActiveEnergy), freetype.Pt(165, 850)},
-		{"AbrilFatface-Regular.ttf", 72, red, fmt.Sprintf("%.0f", doc.RestingEnergy), freetype.Pt(615, 850)},
+		{"CarterOne-Regular.ttf", 108, red, fmt.Sprintf("%.1f", doc.Weight), freetype.Pt(100, 525)},
+		{"CarterOne-Regular.ttf", 108, red, fmt.Sprintf("%.0f", doc.IntakeEnergy), freetype.Pt(600, 525)},
+		{"CarterOne-Regular.ttf", 108, red, fmt.Sprintf("%.0f", doc.ActiveEnergy), freetype.Pt(100, 875)},
+		{"CarterOne-Regular.ttf", 108, red, fmt.Sprintf("%.0f", doc.RestingEnergy), freetype.Pt(600, 875)},
 	}
 	for _, text := range texts {
 		err = c.writeString(text.font, text.size, text.src, text.text, text.point)

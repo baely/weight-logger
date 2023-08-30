@@ -41,6 +41,7 @@ func NewServer() (*Server, error) {
 	r.Get("/trigger-post", s.TriggerPost)
 	r.Get("/refresh-token", s.RefreshToken)
 	r.Get("/new-token", s.NewLongToken)
+	r.Get("/latest-image", s.LatestImage)
 
 	s.s = http.Server{
 		Addr:    addr,
@@ -51,15 +52,15 @@ func NewServer() (*Server, error) {
 }
 
 func (s *Server) Run() {
-	fmt.Println("running on:", s.s.Addr)
-
 	if err := s.s.ListenAndServe(); err != nil {
 		panic(err)
 	}
 }
 
 func (s *Server) GetIndex(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("hello, world"))
+	//w.Write([]byte("hello, world"))
+	s.LatestImage(w, r)
+	return
 }
 
 func (s *Server) PostData(w http.ResponseWriter, r *http.Request) {
@@ -182,4 +183,27 @@ func (s *Server) NewLongToken(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write([]byte("Successfully set long token"))
+}
+
+func (s *Server) LatestImage(w http.ResponseWriter, r *http.Request) {
+	date := time.Now().AddDate(0, 0, -1).Format("2006-01-02")
+	fileName := fmt.Sprintf("weightlog/%s.jpg", date)
+	file, err := gcs.ReadFile(util.ResourceBucket, fileName)
+	if err != nil {
+		fmt.Println("error getting gcs file:", err)
+
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	b, err := io.ReadAll(file)
+	if err != nil {
+		fmt.Println("error reading gcs file:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "image/jpeg")
+	w.Write(b)
 }
